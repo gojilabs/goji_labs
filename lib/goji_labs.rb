@@ -1,19 +1,27 @@
 module GojiLabs
+  ENV_DEVELOPMENT = 'development'
+  ENV_STAGING     = 'staging'
+  ENV_PRODUCTION  = 'production'
+  ENV_TEST        = 'test'
 
 	def self.env
     ENV['GOJI_ENV'] || ENV['RAILS_ENV'] || ENV['RACK_ENV']
 	end
 
 	def self.development?
-		env == 'development'
+		env == ENV_DEVELOPMENT
 	end
 
 	def self.production?
-		env == 'production'
+		env == ENV_PRODUCTION
 	end
 
 	def self.staging?
-		env == 'staging'
+		env == ENV_STAGING
+	end
+
+	def self.test?
+		env == ENV_TEST
 	end
 
   def self.var(environment_variable)
@@ -39,7 +47,7 @@ module GojiLabs
     database_url = "#{adapter}://#{login}#{host}"
     database_url = "#{database_url}:#{port}" if port
     database_url = "#{database_url}/#{database}?pool=#{pool}&encoding=#{encoding}"
-    puts "[GojiLabs] Setting DATABASE_URL to #{database_url}"
+
     ENV['DATABASE_URL'] = database_url
   end
 
@@ -49,19 +57,20 @@ module GojiLabs
     end
     @@project_name
   end
+
+  def self.load_project
+    unless [ENV_PRODUCTION, ENV_STAGING, ENV_TEST, ENV_DEVELOPMENT].include?(env)
+      raise "Environment not set, you must set either GOJI_ENV, RAILS_ENV, or RACK_ENV to development, production, or staging."
+    end
+
+    unless development?
+      require_relative 'goji_labs/initializers/airbrake'
+      require_relative 'goji_labs/initializers/algolia'
+    end
+
+    require_relative 'goji_labs/monkey_patch/float'
+    require_relative 'goji_labs/monkey_patch/nil_class'
+    require_relative 'goji_labs/monkey_patch/string'
+    require_relative 'goji_labs/monkey_patch/active_record/base'
+  end
 end
-
-
-unless GojiLabs.development? || GojiLabs.production? || GojiLabs.staging?
-  raise "Environment not set, you must set either GOJI_ENV, RAILS_ENV, or RACK_ENV to development, production, or staging."
-end
-
-unless GojiLabs.development?
-  require_relative 'goji_labs/initializers/airbrake'
-  require_relative 'goji_labs/initializers/algolia'
-end
-
-require_relative 'goji_labs/monkey_patch/float'
-require_relative 'goji_labs/monkey_patch/nil_class'
-require_relative 'goji_labs/monkey_patch/string'
-require_relative 'goji_labs/monkey_patch/active_record/base'
