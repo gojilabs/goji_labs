@@ -68,6 +68,7 @@ module GojiLabs
       require_relative 'goji_labs/initializers/algolia'
     end
 
+    require_relative 'goji_labs/monkey_patch/fixnum'
     require_relative 'goji_labs/monkey_patch/float'
     require_relative 'goji_labs/monkey_patch/nil_class'
     require_relative 'goji_labs/monkey_patch/string'
