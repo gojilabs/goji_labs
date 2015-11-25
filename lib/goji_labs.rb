@@ -1,5 +1,10 @@
-require 'rails/all'
-require "goji_labs/version"
+require 'rails/all'  # Only a very little bit of this gem is actually needed
+
+require_relative 'goji_labs/monkey_patch/fixnum'
+require_relative 'goji_labs/monkey_patch/float'
+require_relative 'goji_labs/monkey_patch/nil_class'
+require_relative 'goji_labs/monkey_patch/string'
+require_relative 'goji_labs/version'
 
 module GojiLabs
 
@@ -7,7 +12,7 @@ module GojiLabs
 
 	def self.env
 		if Rails.env.production?
-			ENV['GOJI_ENV']
+			ENV['GOJI_ENV'] || 'production'
 		else
 			Rails.env
 		end
