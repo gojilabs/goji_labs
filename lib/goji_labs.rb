@@ -1,4 +1,4 @@
-require 'active_support'
+require 'active_support/all'
 require_relative 'goji_labs/version'
 
 module GojiLabs
@@ -20,15 +20,17 @@ module GojiLabs
 	end
 
   def self.var(environment_variable)
-    raise "Project name must be set" if project_name.blank?
     ENV["#{project_name}_#{environment_variable.strip.split.join('_')}".underscore.upcase]
   end
 
-  def self.project_name(name)
+  def self.project_name=(name)
     @@project_name = name
   end
 
-  def project_name
+  def self.project_name
+    unless defined?(@@project_name) && @@project_name.present?
+      raise "You must call \"GojiLabs.project_name = 'PROJECT_NAME'\" before you try to use the variable functions"
+    end
     @@project_name
   end
 end
