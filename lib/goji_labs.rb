@@ -1,14 +1,10 @@
-require 'rails/all'  # Only a very little bit of this gem is actually needed
+require 'active_support'
 require_relative 'goji_labs/version'
 
 module GojiLabs
 
 	def self.env
-		if Rails.env.production?
-			ENV['GOJI_ENV'] || 'production'
-		else
-			Rails.env
-		end
+    ENV['GOJI_ENV'] || ENV['RAILS_ENV'] || ENV['RACK_ENV']
 	end
 
 	def self.development?
@@ -24,11 +20,22 @@ module GojiLabs
 	end
 
   def self.var(environment_variable)
-    prefix = Rails.application.class.parent.name
-    key = "#{prefix}_#{environment_variable.strip.split.join('_')}".underscore.upcase
-    ENV[key]
+    raise "Project name must be set" if project_name.blank?
+    ENV["#{project_name}_#{environment_variable.strip.split.join('_')}".underscore.upcase]
   end
 
+  def self.project_name(name)
+    @@project_name = name
+  end
+
+  def project_name
+    @@project_name
+  end
+end
+
+
+unless GojiLabs.development? || GojiLabs.production? || GojiLabs.staging?
+  raise "Environment not set, you must set either GOJI_ENV, RAILS_ENV, or RACK_ENV to development, production, or staging."
 end
 
 unless GojiLabs.development?
