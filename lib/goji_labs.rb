@@ -25,6 +25,26 @@ module GojiLabs
 
   def self.project_name=(name)
     @@project_name = name
+    adapter  = var('DATABASE_ADAPTER')  || 'postgresql'
+    encoding = var('DATABASE_ENCODING') || 'unicode'
+    host     = var('DATABASE_HOST')     || 'localhost'
+    pool     = var('DATABASE_POOL')     || '30'
+    port     = var('DATABASE_PORT')
+    username = var('DATABASE_USERNAME')
+    password = var('DATABASE_PASSWORD')
+    database = "#{project_name.split.join('_')}_#{env}".underscore
+
+
+    if username
+      login = password ? "#{username}:#{password}@" : username
+    else
+      login = ''
+    end
+    database_url = "#{adapter}://#{login}#{host}"
+    database_url = "#{database_url}:#{port}" if port
+    database_url = "#{database_url}/#{database}?pool=#{pool}&encoding=#{encoding}"
+
+    ENV['DATABASE_URL'] = database_url
   end
 
   def self.project_name
