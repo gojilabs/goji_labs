@@ -1,6 +1,3 @@
-require 'active_support/all'
-require_relative 'goji_labs/version'
-
 module GojiLabs
 
 	def self.env
@@ -20,7 +17,7 @@ module GojiLabs
 	end
 
   def self.var(environment_variable)
-    ENV["#{project_name}_#{environment_variable.strip.split.join('_')}".underscore.upcase]
+    ENV["#{project_name}_#{environment_variable.strip}".upcase.split.join('_')]
   end
 
   def self.project_name=(name)
@@ -32,8 +29,7 @@ module GojiLabs
     port     = var('DATABASE_PORT')
     username = var('DATABASE_USERNAME')
     password = var('DATABASE_PASSWORD')
-    database = "#{project_name.split.join('_')}_#{env}".underscore
-
+    database = "#{project_name}_#{env}".downcase.split.join('_')
 
     if username
       login = password ? "#{username}:#{password}@" : username
@@ -43,12 +39,12 @@ module GojiLabs
     database_url = "#{adapter}://#{login}#{host}"
     database_url = "#{database_url}:#{port}" if port
     database_url = "#{database_url}/#{database}?pool=#{pool}&encoding=#{encoding}"
-
+    puts "[GojiLabs] Setting DATABASE_URL to #{database_url}"
     ENV['DATABASE_URL'] = database_url
   end
 
   def self.project_name
-    unless defined?(@@project_name) && @@project_name.present?
+    unless defined?(@@project_name) && @@project_name
       raise "You must call \"GojiLabs.project_name = 'PROJECT_NAME'\" before you try to use the variable functions"
     end
     @@project_name
