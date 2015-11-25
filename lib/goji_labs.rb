@@ -1,14 +1,7 @@
 require 'rails/all'  # Only a very little bit of this gem is actually needed
-
-require_relative 'goji_labs/monkey_patch/fixnum'
-require_relative 'goji_labs/monkey_patch/float'
-require_relative 'goji_labs/monkey_patch/nil_class'
-require_relative 'goji_labs/monkey_patch/string'
 require_relative 'goji_labs/version'
 
 module GojiLabs
-
-  ENVIRONMENT_PREFIX = Rails.application.class.parent.name.underscore.upcase
 
 	def self.env
 		if Rails.env.production?
@@ -31,7 +24,19 @@ module GojiLabs
 	end
 
   def self.var(environment_variable)
-    ENV["#{ENVIRONMENT_PREFIX}_#{environment_variable.strip.underscore.upcase}"]
+    prefix = Rails.application.class.parent.name
+    key = "#{prefix}_#{environment_variable.strip.split.join('_')}".underscore.upcase
+    ENV[key]
   end
 
 end
+
+unless GojiLabs.development?
+  require_relative 'goji_labs/initializers/airbrake'
+  require_relative 'goji_labs/initializers/algolia'
+end
+
+require_relative 'goji_labs/monkey_patch/float'
+require_relative 'goji_labs/monkey_patch/nil_class'
+require_relative 'goji_labs/monkey_patch/string'
+require_relative 'goji_labs/monkey_patch/active_record/base'
