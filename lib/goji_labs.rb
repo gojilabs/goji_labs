@@ -42,7 +42,6 @@ module GojiLabs
     end
 
     require_relative 'goji_labs/initializers/algolia'
-    require_relative 'goji_labs/initializers/apartment'
     require_relative 'goji_labs/monkey_patch/fixnum'
     require_relative 'goji_labs/monkey_patch/float'
     require_relative 'goji_labs/monkey_patch/nil_class'
