@@ -6,10 +6,6 @@ namespace :db do
     ActiveRecord::Base.connection.execute 'CREATE EXTENSION IF NOT EXISTS HSTORE SCHEMA shared_extensions;'
     ActiveRecord::Base.connection.execute 'CREATE EXTENSION IF NOT EXISTS "uuid-ossp" SCHEMA shared_extensions;'
   end
-
-  desc 'Creates schema that will namespace all tables for this project'
-  task :create_schema => :environment do
-  end
 end
 
 Rake::Task["db:test:purge"].enhance do
