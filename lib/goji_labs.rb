@@ -8,6 +8,10 @@ module GojiLabs
     ENV['GOJI_ENV'] || ENV['RAILS_ENV'] || ENV['RACK_ENV']
 	end
 
+  def self.project_name
+    ENV['PROJECT_NAME']
+  end
+
 	def self.development?
 		env == ENV_DEVELOPMENT
 	end
@@ -29,15 +33,22 @@ module GojiLabs
       raise "Environment not set, you must set either GOJI_ENV, RAILS_ENV, or RACK_ENV to development, production, or staging."
     end
 
+    unless project_name && project_name.length > 0
+      raise "PROJECT_NAME not set."
+    end
+
     if staging? || production?
       require_relative 'goji_labs/initializers/airbrake'
     end
 
     require_relative 'goji_labs/initializers/algolia'
+    require_relative 'goji_labs/initializers/apartment'
     require_relative 'goji_labs/monkey_patch/fixnum'
     require_relative 'goji_labs/monkey_patch/float'
     require_relative 'goji_labs/monkey_patch/nil_class'
     require_relative 'goji_labs/monkey_patch/string'
     require_relative 'goji_labs/monkey_patch/active_record/base'
   end
+
+  require 'goji_labs/railtie' if defined?(Rails)
 end
