@@ -27,3 +27,7 @@ end
 Rake::Task["db:create"].enhance do
   Rake::Task["db:create_schemas"].invoke if using_postgres?
 end
+
+Rake::Task["db:migrate"].enhance do
+  Rake::Task["db:create_schemas"].invoke if using_postgres?
+end
