@@ -9,5 +9,8 @@ if defined?(Airbrake)
     config.project_id = project_id.to_i
     config.project_key = project_key
     config.environment = GojiLabs.env
+    config.root_directory = Rails.root
+    config.logger = Rails.logger
+    config.ignore_environments = %w(test development)
   end
 end
