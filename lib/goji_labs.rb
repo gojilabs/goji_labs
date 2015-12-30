@@ -37,10 +37,7 @@ module GojiLabs
       raise "PROJECT_NAME not set."
     end
 
-    if staging? || production?
-      require_relative 'goji_labs/initializers/airbrake'
-    end
-
+    require_relative 'goji_labs/initializers/airbrake'
     require_relative 'goji_labs/initializers/algolia'
     require_relative 'goji_labs/monkey_patch/fixnum'
     require_relative 'goji_labs/monkey_patch/float'
