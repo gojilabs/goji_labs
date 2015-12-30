@@ -1,10 +1,13 @@
 if defined?(Airbrake)
-  api_key = ENV["AIRBRAKE_API_KEY"]
+  project_key = ENV["AIRBRAKE_PROJECT_KEY"]
+  project_id = ENV["AIRBRAKE_PROJECT_ID"]
 
-  raise "Airbrake API key is blank" unless api_key && api_key.length > 0
+  raise "Airbrake project key is blank" unless project_key && project_key.length > 0
+  raise "Airbrake project ID is blank" unless project_id && project_id.length > 0
 
   Airbrake.configure do |config|
-    config.api_key = api_key
-    config.environment_name = GojiLabs.env
+    config.project_id = project_id.to_i
+    config.project_key = project_key
+    config.environment = GojiLabs.env
   end
 end
