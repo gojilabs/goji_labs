@@ -7,6 +7,10 @@ namespace :db do
     defined?(ActiveRecord::ConnectionAdapters::PostgreSQLAdapter)
   end
 
+  def schemas_on?
+    ENV['POSTGRESQL_SCHEMAS_ON'].to_s == 'true'
+  end
+
   namespace :pg do
 
     desc 'Create schemas for Goji Labs PostgreSQL project'
@@ -31,13 +35,13 @@ namespace :db do
 end
 
 Rake::Task["db:test:purge"].enhance do
-  Rake::Task["db:pg:create_schema"].invoke
+  Rake::Task["db:pg:create_schema"].invoke if schemas_on?
 end
 
 Rake::Task["db:create"].enhance do
-  Rake::Task["db:pg:create_schema"].invoke if using_postgres?
+  Rake::Task["db:pg:create_schema"].invoke if schemas_on?
 end
 
 Rake::Task["db:migrate"].enhance do
-  Rake::Task["db:pg:create_schema"].invoke if using_postgres?
+  Rake::Task["db:pg:create_schema"].invoke if schemas_on?
 end
