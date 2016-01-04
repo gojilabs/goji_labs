@@ -19,6 +19,7 @@ namespace :db do
     end
   end
 
+  desc 'Drop project schema for Goji Labs PostgreSQL project'
   task drop_schema: :environment do
     if using_postgres?
       ActiveRecord::Base.connection.execute "DROP SCHEMA IF EXISTS #{GojiLabs.project_name}"
